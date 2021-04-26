@@ -15,15 +15,15 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * Решение основано на тредах, как указано в ТЗ, хотя с использованием Executors и CompletableFuture
  * код был бы чище и проще.
  * */
-public class FileProcessor {
-    private static final Logger log = LoggerFactory.getLogger( FileProcessor.class );
+public class FileProcessor2 implements Runnable{
+    private static final Logger log = LoggerFactory.getLogger( FileProcessor2.class );
 
     private final Thread workingThread;
 
-    public FileProcessor(int threadId,
-                         ConcurrentLinkedDeque<File> files,
-                         IWordCounter wordCounter,
-                         IResultsCollector collector) {
+    public FileProcessor2(int threadId,
+                          ConcurrentLinkedDeque<File> files,
+                          IWordCounter wordCounter,
+                          IResultsCollector collector) {
         this.workingThread = new Thread(() -> {
             File fileToBeProcessed;
             while ((fileToBeProcessed = files.poll()) != null) {
@@ -40,6 +40,12 @@ public class FileProcessor {
                 }
             }
         }, String.format("process-%s", threadId));
+    }
+
+
+    @Override
+    public void run() {
+        
     }
 
     public void start() {
