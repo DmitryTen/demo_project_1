@@ -1,6 +1,6 @@
 package demo.project;
 
-import demo.project.counter.IWordCounter;
+import demo.project.counter.IWordCounterHandler;
 import demo.project.processor.FileProcessor;
 import demo.project.result.ResultsCollector;
 import demo.project.result.SumService;
@@ -10,25 +10,31 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class BasicService {
-    private final FileProcessor[] processors;
-    private final ResultsCollector onResultsSubscriber = new ResultsCollector();
-    private final SumService sumService = new SumService(this, onResultsSubscriber);
+    private final Thread[] threads;
+    private final ResultsCollector resultsCollector = new ResultsCollector();
+    private final SumService sumService = new SumService(this, resultsCollector);
 
-    public BasicService(File directory, int concurrencyLevel, IWordCounter wordCounter){
-        processors = new FileProcessor[concurrencyLevel];
+    public BasicService(File directory, int concurrencyLevel, IWordCounterHandler wordCounter){
+        threads = new Thread[concurrencyLevel];
         ConcurrentLinkedDeque<File> files = new ConcurrentLinkedDeque<>(Arrays.asList(directory.listFiles()));
 
+        /**
+         * "P.S: Ожидается реализация на Thread, для анализа слов использовать Regex."
+         *
+         * Решение основано на тредах, как указано в ТЗ, хотя с использованием Executors и CompletableFuture
+         * код был бы чище и проще.
+         * */
         for (int i=0; i < concurrencyLevel; i++) {
-            processors[i] = new FileProcessor(i, files, wordCounter, onResultsSubscriber);
+            threads[i] = new Thread(new FileProcessor(files, resultsCollector, wordCounter), String.format("process-%s", i));
         }
     }
 
     public void startService(){
-        Arrays.stream(processors).forEach(p -> p.start());
+        Arrays.stream(threads).forEach(t -> t.start());
     }
 
     public boolean isThereAnyProcessAlive(){
-        return Arrays.stream(processors).filter(p -> p.isAlive()).findAny().isPresent();
+        return Arrays.stream(threads).filter(t -> t.isAlive()).findAny().isPresent();
     }
 
     public TreeMap<Integer, String> waitAndGetResults(int cnt) {

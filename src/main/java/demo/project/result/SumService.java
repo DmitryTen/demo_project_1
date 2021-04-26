@@ -10,6 +10,11 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
+
+/**
+ * Сервис получающий подсчитанные FileProcessor-ами слова
+ * */
 public class SumService {
     private static final Logger log = LoggerFactory.getLogger( SumService.class );
 
@@ -44,7 +49,6 @@ public class SumService {
              * Пока не все файлы обработаны, работаем.
              * */
             while (basicService.isThereAnyProcessAlive() || collector.getSize() > 0) {
-                log.info("summarizing results");
                 /**
                  * Если пока нечего обрабатывать - ждем
                  * */
@@ -63,7 +67,6 @@ public class SumService {
                         }
                     });
                     log.info("just added '{}' cnt: {}. Total size: {}", container.sourceName, words.size(), TOTAL_COLLECTION.size());
-
                 }
             }
         } catch (Exception e) {

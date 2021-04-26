@@ -12,15 +12,15 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
-public class BasicWordCounter implements IWordCounter {
-    private static final Logger log = LoggerFactory.getLogger( BasicWordCounter.class );
+public class BasicWordCounterHandler implements IWordCounterHandler {
+    private static final Logger log = LoggerFactory.getLogger( BasicWordCounterHandler.class );
 
 
     final int maxLength;
     static final Pattern PUNCTUATION = Pattern.compile("\\p{Punct}");
     static final Pattern AVOID_WORDS_WITH_DIGITS = Pattern.compile("\\S*\\d+\\S*");
 
-    public BasicWordCounter(int maxLength) {
+    public BasicWordCounterHandler(int maxLength) {
         this.maxLength = maxLength;
     }
 

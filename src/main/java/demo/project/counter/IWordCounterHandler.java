@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Интерфейс для парсинга текста и подсчета количества слов.
  * */
-public interface IWordCounter {
+public interface IWordCounterHandler {
 
     Map<String, AtomicInteger> countWords(BufferedReader textSource) throws IOException;
 }

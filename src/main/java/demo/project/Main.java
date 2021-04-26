@@ -1,21 +1,13 @@
 package demo.project;
 
-import demo.project.counter.BasicWordCounter;
+import demo.project.counter.BasicWordCounterHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.TreeMap;
 
 
-/**
- * Реализовать приложение, которое будет выдавать список из 10-ти самых часто используемых слов, длина которых превышает
- * заданную. Слова должны подсчитываться в множестве текстовых файлов в указанной папке. Приложение должно производить
- * подсчёт в многопоточном режиме.
- * P.S: Ожидается реализация на Thread, для анализа слов использовать Regex.
- *
- * При выполнении задачи не забывать о принципах SOLID.
- * При оценки выполненного задания будет учитываться эффективность работы приложения
- * */
+
 public class Main {
     private static final Logger log = LoggerFactory.getLogger( Main.class );
 
@@ -74,7 +66,7 @@ public class Main {
             return;
         }
 
-        BasicService basicService = new BasicService(directory, concurrencyLevel, new BasicWordCounter(wordLength));
+        BasicService basicService = new BasicService(directory, concurrencyLevel, new BasicWordCounterHandler(wordLength));
         basicService.startService();
 
         TreeMap<Integer, String> results = basicService.waitAndGetResults(WORDS_CNT);
