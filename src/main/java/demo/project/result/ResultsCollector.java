@@ -26,7 +26,7 @@ public class ResultsCollector implements IResultsCollector {
     public void collect(Map<String, AtomicInteger> results, String sourceName) {
         if (results != null && results.size() > 0) {
             RESULTS_FROM_PROCESSORS.add(new ResultsContainer(results, sourceName));
-            log.info("placing results of '{}' into subscriber, words_cnt: {}, results_waiting: {}",
+            log.info("placing results of '{}' into collector, words_cnt: {}, results_waiting: {}",
                     sourceName, results.size(), RESULTS_FROM_PROCESSORS.size());
         }
     }
