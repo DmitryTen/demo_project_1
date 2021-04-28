@@ -4,8 +4,8 @@ import demo.project.counter.BasicWordCounterHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
-import java.util.TreeMap;
-
+import java.nio.charset.Charset;
+import java.util.List;
 
 
 public class Main {
@@ -31,17 +31,30 @@ public class Main {
             }
 
             int wordLength = Integer.parseInt(args[1]);
-            int concurrencyLevel;
+            int concurrencyLevel = 20;
+            Charset charset = null;
             if (args.length > 2) {
-                concurrencyLevel = Integer.parseInt(args[2]);
-            } else {
-                concurrencyLevel = 20;
+                String[] additionalArgs = new String[args.length - 2];
+                System.arraycopy(args, 2, additionalArgs, 0, additionalArgs.length);
+
+                for (int i = 0; i < additionalArgs.length; i++) {
+                    String arg = additionalArgs[i];
+                    if (arg.startsWith("-charset=")) {
+                        charset = Charset.forName(arg.split("=")[1]);
+                    } else if (arg.startsWith("-concurrency=")) {
+                        concurrencyLevel = Integer.parseInt(arg.split("=")[1]);
+                    }
+                }
             }
 
-            log.info("Starting. FilePath: '{}', word length: {}, concurrencyLevel: {}",
-                    file.getAbsolutePath(), wordLength, concurrencyLevel);
+            if (charset == null) {
+                charset = Charset.defaultCharset();
+            }
 
-            calculate(file, wordLength, concurrencyLevel);
+            log.info("Starting to process files.\nFilePath: '{}',\nword length: {},\nconcurrencyLevel: {}\nCharset: {}",
+                    file.getAbsolutePath(), wordLength, concurrencyLevel, charset.toString());
+
+            calculate(charset, file, wordLength, concurrencyLevel);
         } catch (Exception e) {
             log.info("Exception", e);
         }
@@ -60,19 +73,18 @@ public class Main {
      *
      *
      * */
-    public static void calculate(File directory, int wordLength, int concurrencyLevel) throws InterruptedException {
+    public static void calculate(Charset charset, File directory, int wordLength, int concurrencyLevel) throws InterruptedException {
         if (directory.listFiles() == null) {
             System.out.println(String.format("files not found inside '%s' directory", directory.getAbsolutePath()));
             return;
         }
 
-        BasicService basicService = new BasicService(directory, concurrencyLevel, new BasicWordCounterHandler(wordLength));
+        BasicService basicService = new BasicService(charset, directory, concurrencyLevel, new BasicWordCounterHandler(wordLength));
         basicService.startService();
 
-        TreeMap<Integer, String> results = basicService.waitAndGetResults(WORDS_CNT);
-        results.forEach((k,v) -> {
-            log.info(String.format("Word: '%s', cnt: %s", v, k));
-            System.out.println(v);
+        List<String> results = basicService.waitAndGetResults(WORDS_CNT);
+        results.forEach( word -> {
+            System.out.println(word);
         });
     }
 }

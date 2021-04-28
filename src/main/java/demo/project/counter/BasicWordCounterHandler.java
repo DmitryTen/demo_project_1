@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
@@ -40,7 +37,7 @@ public class BasicWordCounterHandler implements IWordCounterHandler {
             return Collections.emptyMap();
         }
 
-        Map<String, AtomicInteger> words = new HashMap<>();
+        Map<String, AtomicInteger> words = new LinkedHashMap<>();
         String line;
         while ((line = textSource.readLine()) != null) {
             Arrays.stream(PUNCTUATION.matcher(line).replaceAll("").split(" "))

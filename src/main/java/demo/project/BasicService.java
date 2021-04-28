@@ -5,8 +5,9 @@ import demo.project.processor.FileProcessor;
 import demo.project.result.ResultsCollector;
 import demo.project.result.SumService;
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.TreeMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class BasicService {
@@ -14,7 +15,7 @@ public class BasicService {
     private final ResultsCollector resultsCollector = new ResultsCollector();
     private final SumService sumService = new SumService(this, resultsCollector);
 
-    public BasicService(File directory, int concurrencyLevel, IWordCounterHandler wordCounter){
+    public BasicService(Charset charset, File directory, int concurrencyLevel, IWordCounterHandler wordCounter){
         threads = new Thread[concurrencyLevel];
         ConcurrentLinkedDeque<File> files = new ConcurrentLinkedDeque<>(Arrays.asList(directory.listFiles()));
 
@@ -25,7 +26,7 @@ public class BasicService {
          * код был бы чище и проще.
          * */
         for (int i=0; i < concurrencyLevel; i++) {
-            threads[i] = new Thread(new FileProcessor(files, resultsCollector, wordCounter), String.format("process-%s", i));
+            threads[i] = new Thread(new FileProcessor(charset, files, resultsCollector, wordCounter), String.format("process-%s", i));
         }
     }
 
@@ -37,7 +38,7 @@ public class BasicService {
         return Arrays.stream(threads).filter(t -> t.isAlive()).findAny().isPresent();
     }
 
-    public TreeMap<Integer, String> waitAndGetResults(int cnt) {
+    public List<String> waitAndGetResults(int cnt) {
         return sumService.waitAndGetResults(cnt);
     }
 }

@@ -4,10 +4,7 @@ import demo.project.BasicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -20,26 +17,46 @@ public class SumService {
 
     private final BasicService basicService;
     private final ResultsCollector collector;
-    private final ConcurrentHashMap<String, AtomicInteger> TOTAL_COLLECTION = new ConcurrentHashMap<>();
+    private final Map<String, AtomicInteger> TOTAL_COLLECTION = new LinkedHashMap<>();
 
     public SumService(BasicService basicService, ResultsCollector collector) {
         this.collector = collector;
         this.basicService = basicService;
     }
 
-    public TreeMap<Integer, String> waitAndGetResults(int cnt)  {
+    public List<String> waitAndGetResults(int maxCount)  {
         summarizeResults();
 
-        TreeMap<Integer, String> treeMap = new TreeMap<>(Collections.reverseOrder());
+        AtomicInteger counter = new AtomicInteger();
+        TreeMap<Integer, LinkedList<String>> treeMap = new TreeMap<>(Collections.reverseOrder());
         TOTAL_COLLECTION.entrySet().forEach(entry -> {
-            treeMap.put(entry.getValue().get(), entry.getKey());
+            LinkedList<String> bucket = treeMap.computeIfAbsent(entry.getValue().get(), (value) -> new LinkedList<String>());
+            bucket.add(entry.getKey());
+            int size = counter.incrementAndGet();
 
-            if (treeMap.size() > cnt) {
-                treeMap.remove(treeMap.lastKey());
+            if (size > maxCount) {
+                LinkedList<String> lastBucket = treeMap.get(treeMap.lastKey());
+                lastBucket.removeLast();
+                counter.decrementAndGet();
+                if (lastBucket.size() == 0) {
+                    treeMap.remove(treeMap.lastKey());
+                }
             }
         });
 
-        return treeMap;
+        return evalToList(treeMap);
+    }
+
+
+    private List<String> evalToList(TreeMap<Integer, LinkedList<String>> treeMap) {
+        List<String> list = new ArrayList<>();
+        treeMap.forEach((k, v) -> {
+            v.forEach( word -> {
+               log.info("word {}, cnt: {}", word, k);
+               list.add(word);
+            });
+        });
+        return list;
     }
 
 

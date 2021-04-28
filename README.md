@@ -17,10 +17,21 @@ P.S: Ожидается реализация на Thread, для анализа 
     где test_dir/ - путь к файлу с текстовыми папками
     5 - минимальная длина слова
     
-По дефолту приложение работает в 20 потоков (на каждый файл по потоку, если файлов меньше то и потоков будет меньше), но если нужно отрегулировать поточность нужно добавить аргумент
+Дополнительные настройки:
+1. По дефолту приложение работает в кодировке дефолтной кодировке системы (обычно это UTF-8), если необходимо прописать 
+иную кодировку:
 
-    java -jar target/demo_word_count-1.0-SNAPSHOT-one-jar-build.jar test_dir/ 5 10
-    10 - количество потоков
+    
+    java -jar target/demo_word_count-1.0-SNAPSHOT-one-jar-build.jar test_dir/ 5 -charset=Windows-1251
+    
+2. По дефолту приложение работает в максимум 20 потоков, если нужно прописать иное то:
+
+    
+    java -jar target/demo_word_count-1.0-SNAPSHOT-one-jar-build.jar test_dir/ 5 -concurrency=50
+    
+можно комбинировать 
+
+    java -jar target/demo_word_count-1.0-SNAPSHOT-one-jar-build.jar test_dir/ 5 -concurrency=50 -charset=Windows-1251
     
 Программа генерирует лог-файл logfile.log 
 
