@@ -31,7 +31,7 @@ public class FileProcessor implements Runnable{
         while ((fileToBeProcessed = files.poll()) != null) {
             if (fileToBeProcessed.isDirectory()) {
                 log.info("Attention, {} is a directory, bypassing", fileToBeProcessed.getAbsolutePath());
-                return;
+                continue;
             }
 
             log.info("Starting to process file: {}", fileToBeProcessed.getAbsolutePath());
