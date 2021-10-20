@@ -38,6 +38,11 @@ pipeline {
             }
             steps {
                 script {
+                    env.ENV_VAR = input message: "Other way make selection. Inside script",
+                            ok: "this is a btn name",
+                            parameters: [
+                                    choice(name: 'ONE', choices: ['dev', 'staging', 'prod'], description: 'some descr')
+                            ]
                     gv.testApp()
                 }
             }
