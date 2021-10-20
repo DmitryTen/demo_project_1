@@ -36,7 +36,7 @@ pipeline {
         }
         stage('deploy') {
             steps {
-                echo 'deploying app'
+                echo "deploying app ${params.VERSION2}"
                 withCredentials([
                     usernamePassword(credentialsId: 'github-creds', usernameVariable: 'USER', passwordVariable: 'PASSWORD')
                 ]){
