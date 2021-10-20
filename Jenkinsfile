@@ -4,6 +4,11 @@ pipeline {
     tools {
         maven 'Maven 3.8.3'
     }
+    parameters {
+        string(name: 'VERSION', defaultValue: '', description: 'version to deploy on prod')
+        choice(name: 'VERSION2', choices: ['1.1.0', '1.1.1', '1.1.2'], description: 'some descr')
+        booleanParam(name: 'executeTest', defaultValue: true, description: 'bool param')
+    }
     environment {
         NEW_VERSION = "1.2.3"
         CREDS = credentials('github-creds')
@@ -22,7 +27,7 @@ pipeline {
         stage('test') {
             when {
                 expression {
-                    env.BRANCH_NAME == 'dev' || env.BRANCH_NAME == 'master'
+                    env.BRANCH_NAME == 'dev' || params.executeTest
                 }
             }
             steps {
