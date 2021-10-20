@@ -29,9 +29,10 @@ pipeline {
             steps {
                 echo 'deploying app'
                 withCredentials([
-                    usernamePassword(credentials: 'github-creds', usernameVariable: USER, passwordVariable: PASSWORD)
+                    usernamePassword(credentialsId: 'github-creds', usernameVariable: 'USER', passwordVariable: 'PASSWORD')
                 ]){
                     sh "echo user"
+                    sh 'echo user: $USER, pswd: $PASSWORD'
                 }
             }
         }
