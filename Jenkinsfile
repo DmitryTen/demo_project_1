@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         NEW_VERSION = "1.2.3"
+        CREDS = credentials('github-creds')
     }
     stages {
 
@@ -11,6 +12,7 @@ pipeline {
                 echo 'building app'
                 echo 'building ${NEW_VERSION} - var is not installed'
                 echo "building ${NEW_VERSION} - !var is installed!"
+                echo "Creds: ${CREDS}"
             }
         }
         stage('test') {
