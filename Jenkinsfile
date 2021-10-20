@@ -28,6 +28,11 @@ pipeline {
         stage('deploy') {
             steps {
                 echo 'deploying app'
+                withCredentials([
+                    usernamePassword(credentials: 'github-creds', usernameVariable: USER, passwordVariable: PASSWORD)
+                ]){
+                    sh 'echo user: $USER, pswd: $PASSWORD'
+                }
             }
         }
     }
