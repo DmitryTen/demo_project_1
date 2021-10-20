@@ -16,6 +16,8 @@ def deployApp() {
     ]){
         sh "echo user"
         sh 'echo user: $USER, pswd: $PASSWORD'
+        sh "echo user: $USER, pswd: $PASSWORD"
+        sh "echo user: $var_name"
     }
 }
 
