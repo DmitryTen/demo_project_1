@@ -1,6 +1,9 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven 3.8.3'
+    }
     environment {
         NEW_VERSION = "1.2.3"
         CREDS = credentials('github-creds')
@@ -10,6 +13,7 @@ pipeline {
         stage('build') {
             steps {
                 echo 'building app'
+                sh 'mvn --version'
                 echo 'building ${NEW_VERSION} - var is not installed'
                 echo "building ${NEW_VERSION} - !var is installed!"
                 echo "Creds: ${CREDS}, user: ${CREDS_USR}, passwd: ${CREDS_PSW}"
