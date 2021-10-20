@@ -1,3 +1,5 @@
+def gv
+
 pipeline {
     agent any
 
@@ -14,14 +16,18 @@ pipeline {
         CREDS = credentials('github-creds')
     }
     stages {
-
+        stage('init'){
+            steps {
+                script {
+                    gv = load 'external_script.groovy'
+                }
+            }
+        }
         stage('build') {
             steps {
-                echo 'building app'
-                sh 'mvn --version'
-                echo 'building ${NEW_VERSION} - var is not installed'
-                echo "building ${NEW_VERSION} - !var is installed!"
-                echo "Creds: ${CREDS}, user: ${CREDS_USR}, passwd: ${CREDS_PSW}"
+                script {
+                    gv.buildApp()
+                }
             }
         }
         stage('test') {
@@ -31,17 +37,15 @@ pipeline {
                 }
             }
             steps {
-                echo 'testing app'
+                script {
+                    gv.testApp()
+                }
             }
         }
         stage('deploy') {
             steps {
-                echo "deploying app ${params.VERSION2}"
-                withCredentials([
-                    usernamePassword(credentialsId: 'github-creds', usernameVariable: 'USER', passwordVariable: 'PASSWORD')
-                ]){
-                    sh "echo user"
-                    sh 'echo user: $USER, pswd: $PASSWORD'
+                script {
+                    gv.deployApp()
                 }
             }
         }
