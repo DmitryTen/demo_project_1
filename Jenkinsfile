@@ -12,7 +12,7 @@ pipeline {
                 echo 'building app'
                 echo 'building ${NEW_VERSION} - var is not installed'
                 echo "building ${NEW_VERSION} - !var is installed!"
-                echo "Creds: ${CREDS}"
+                echo "Creds: ${CREDS}, user: ${CREDS_USR}, passwd: ${CREDS_PWD}"
             }
         }
         stage('test') {
